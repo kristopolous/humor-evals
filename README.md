@@ -1,105 +1,60 @@
-# A dataset of English plaintext jokes
+# Joke Evaluation Benchmark
 
-There are about 208 000 jokes in this database scraped from three sources.
+A simple benchmark for evaluating language models' ability to distinguish between good and bad jokes, based on real Reddit voting data.
 
-I make no claim on ownership of these files, nor do I necessarily endorse the jokes in them. This dataset is provided for research purposes (see License section below).
+## Overview
 
-This repository was archived in December 2022 and receives no further support.
+This project tests whether language models can identify which of two jokes is funnier, using a dataset of 195,000+ Reddit jokes with community scores. Models are presented with pairs of jokes (one highly upvoted, one poorly rated) and must choose the funnier one.
 
+## How It Works
 
-## Files
-Currently the dataset contains jokes from three sources, each in a different file.
+### Core Concept
+- **Dataset**: 195,000+ jokes from Reddit, sorted by score (upvotes - downvotes)
+- **Test pairs**: For each trial, select:
+  - One joke from the bottom `offset` positions (lowest scores)
+  - One joke from the top `offset` positions (highest scores)
+- **Shuffling**: Joke positions (A/B) are randomized to avoid positional bias
+- **Evaluation**: Model must output "A" or "B" indicating which joke is funnier
+- **Scoring**: Percentage of correct choices over 30 trials
 
-```
-----------------------------------------------
-reddit_jokes.json |  195K jokes | 7.40M tokens
-stupidstuff.json  | 3.77K jokes |  396K tokens
-wocka.json        | 10.0K jokes | 1.11M tokens
-----------------------------------------------
-TOTAL             |  208K jokes | 8.91M tokens
-----------------------------------------------
-```
+### The Benchmark
+Models are tested on their ability to:
+1. Understand humor (setup + punchline structure)
+2. Align with human preferences (Reddit voting patterns)
+3. Follow simple instructions (output only "A" or "B")
 
-## Format
-Each file is a JSON document, containing a flat list of joke objects. Each joke object always has the `body` field with additional fields varying based on the dataset, described below.
+4. **Ensure `llcat` is available**:
 
-Obviously they are not all funny; to find the best ones, sort on the relevant additional fields.
+pipx install llcat
 
-Note that the title is in part of the joke many cases (especially for Reddit submissions).
-
-### reddit_jokes.json
-Scraped from [/r/jokes](https://www.reddit.com/r/jokes). Contains all submissions to the subreddit as of 13.02.2017.
-
-These jokes may have additional comments in them ([example](https://www.reddit.com/r/Jokes/comments/5k9tgu/this_is_the_dirty_joke_my_85yo_grandad_told_to/)).
-
-Additional fields:
-
-* `id` -- submission ID in the subreddit.
-* `score` -- post score displayed on Reddit.
-* `title` -- title of the submission.
-
-```json
-{
-        "title": "My boss said to me, \"you're the worst train driver ever. How many have you derailed this year?\"",
-        "body": "I said, \"I'm not sure; it's hard to keep track.\"",
-        "id": "5tyytx",
-        "score": 3
-    }
+### Run a single test:
+```bash
+# Get the correct answer and prompt for offset 1
+./joke_eval.py 1
 ```
 
-### stupidstuff.json
-Scraped from [stupidstuff.org](http://stupidstuff.org/jokes/).
-
-Additional fields:
-
-* `id` -- page ID on stupidstuff.org.
-* `category` -- see available categories [here](http://stupidstuff.org/jokes/category.htm).
-* `rating` -- mean user rating on a scale of 1 to 5.
-
-```json
-{
-        "category": "Blonde Jokes",
-        "body": "A blonde is walking down the street with her blouse open, exposing one of her breasts. A nearby policeman approaches her and remarks, \"Ma'am, are you aware that I could cite you for indecent exposure?\" \"Why, officer?\" asks the blonde. \"Because your blouse is open and your breast is exposed.\" \"Oh my goodness,\" exclaims the blonde, \"I must have left my baby on the bus!\"",
-        "id": 14,
-        "rating": 3.5
-    }
+### Prompt Format
+```
+Which joke is funnier? Say only "A" or "B". Do not be conversational.
+<Joke A><setup>{setup}</setup>
+<punchline>{punchline}</punchline></Joke A>
+<Joke B><setup>{setup}</setup>
+<punchline>{punchline}</punchline>
+</Joke B>
 ```
 
+### Response Parsing
+The benchmark extracts the first "A" or "B" from the model's response, ignoring all other text and whitespace.
 
-### wocka.json
-Scraped from [wocka.com](http://wocka.com/).
-
-Additional fields:
-
-* `id` -- page ID on wocka.com.
-* `category` -- see available categories [here](http://www.wocka.com/).
-* `title` -- title of the joke.
-
-```json
-{
-        "title": "Infants vs Adults",
-        "body": "Do infants enjoy infancy as much as adults enjoy adultery?",
-        "category": "One Liners",
-        "id": 17
-    }
-```
-
+### Randomization
+Each test uses `random.shuffle()` to randomize which joke appears as A vs B, preventing positional bias in model responses.
 
 ## License
-I provide this dataset for research purposes and make no ownership claim on any part of it. The question of copyright in the case of jokes is unclear and I recommend not using the dataset commercially.
 
-For removal of copyrighted content, please contact me on GitHub.
+MIT License - see LICENSE file for details.
 
-## Citing
-If you use this dataset in academic work, please cite as follows:
+## Acknowledgments
 
-```bibtex
-@misc{pungas,
-        title={A dataset of English plaintext jokes.},
-        url={https://github.com/taivop/joke-dataset},
-        author={Pungas, Taivo},
-        year={2017},
-        publisher = {GitHub},
-        journal = {GitHub repository}
-}
-```
+- Reddit joke dataset from [taivop/joke-dataset](https://github.com/taivop/joke-dataset)
+- Inspired by the need for simple, interpretable LLM benchmarks
+- Thanks to the Ollama team for easy local model serving
