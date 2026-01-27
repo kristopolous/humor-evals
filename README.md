@@ -1,6 +1,6 @@
 # Joke Evaluation Benchmark
 
-A simple benchmark for evaluating language models' ability to distinguish between good and bad jokes, based on Reddit voting data.
+A simple benchmark for evaluating language models' ability to distinguish between good and bad jokes, based on Reddit voting data. [current scores](https://docs.google.com/spreadsheets/d/1wLqHA0ohxukgPLpSgklzlYKwmpwu4EwywvWcvNGEs8s/edit?usp=sharing)
 
 ## Overview
 
