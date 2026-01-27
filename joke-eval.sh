@@ -10,7 +10,6 @@ for model in $(llcat -su $server -m | sort); do
         guess=${guess:0:1}
         [[ -n "$guess" ]] || guess="X"
 
-
         if [[ "$guess" == "$correct" ]]; then
             echo -n "."
             (( score++ ))
