@@ -15,7 +15,7 @@ This project tests whether language models can identify which of two jokes is fu
   - One joke from the top `offset` positions (highest scores)
 - **Shuffling**: Joke positions (A/B) are randomized to avoid positional bias
 - **Evaluation**: Model must output "A" or "B" indicating which joke is funnier
-- **Scoring**: Percentage of correct choices over 30 trials
+- **Scoring**: Percentage of correct choices over some variable number of trials
 
 ### The Benchmark
 Models are tested on their ability to:
