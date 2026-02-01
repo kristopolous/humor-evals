@@ -22,10 +22,7 @@ Models are tested on their ability to:
 1. Understand humor (setup + punchline structure)
 2. Align with human preferences (Reddit voting patterns)
 3. Follow simple instructions (output only "A" or "B")
-
-4. **Ensure `llcat` is available**:
-
-pipx install llcat
+4. **Ensure [`llcat`](https://github.com/day50-dev/llcat) is available**: `pipx install llcat`
 
 ### Run a single test:
 ```bash
